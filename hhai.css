@@ -49,15 +49,15 @@ li {
     font-family: "Comic Sans MS", cursive, sans-serif;
     color: rgb(232, 243, 255);
     text-align: center;
-    font-size: 150%;
+    font-size: 130%;
 }
 
 .font:hover {
     transition-duration: 0.3s;
     font-family: "Comic Sans MS", cursive, sans-serif;
-    color: rgb(184, 214, 247);
+    color: rgb(141, 162, 189);
     text-align: center;
-    font-size: 170%;
+    font-size: 145%;
 }
 
 .box2 {
@@ -72,17 +72,7 @@ li {
     border-top-right-radius: 30px;
 }
 
-.box2:hover {
-    transition-duration: 0.3s;
-    width: 55%;
-    height: 45%;
-    background-color: rgb(5, 4, 22);
-    margin: auto;
-    border-bottom-left-radius: 50px;
-    border-bottom-right-radius: 50px;
-    border-top-left-radius: 50px;
-    border-top-right-radius: 50px;
-}
+ 
 
 .ht {
     background: (7, 6, 27);
@@ -115,22 +105,12 @@ li {
     border-top-right-radius: 30px;
 }
 
-.box3:hover {
-    transition-duration: 0.3s;
-    width: 75%;
-    height: 65%;
-    background-color: rgb(7, 6, 27);
-    margin: auto;
-    border-bottom-left-radius: 50px;
-    border-bottom-right-radius: 50px;
-    border-top-left-radius: 50px;
-    border-top-right-radius: 50px;
-}
+
 
 .box4 {
     transition-duration: 0.3s;
     width: 80%;
-    height: 80%;
+    height: 50%;
     background-color: rgb(7, 6, 27);
     margin: auto;
     border-bottom-left-radius: 30px;
@@ -139,21 +119,10 @@ li {
     border-top-right-radius: 30px;
 }
 
-.box4:hover {
-    transition-duration: 0.3s;
-    width: 83%;
-    height: 83%;
-    background-color: rgb(4, 3, 20);
-    margin: auto;
-    border-bottom-left-radius: 60px;
-    border-bottom-right-radius: 60px;
-    border-top-left-radius: 60px;
-    border-top-right-radius: 60px;
-}
 
 .lst1 {
     width: 100%;
-    height: 65%;
+    height: 100%;
     background-color: rgb(7, 6, 27);
     margin: auto;
     border-bottom-left-radius: 25px;
@@ -167,9 +136,9 @@ li {
 
 .lst {
     width: 26%;
-    height: 40%;
+    height: 39%;
     transition-duration: 0.3s;
-    background-color: rgb(255, 255, 255);
+    background-color: rgba(255, 255, 255, 0.705);
     border-bottom-left-radius: 25px;
     border-bottom-right-radius: 25px;
     border-top-left-radius: 25px;
@@ -179,9 +148,9 @@ li {
 
 .lst:hover {
     width: 29%;
-    height: 44%;
+    height: 41%;
     transition-duration: 0.3s;
-    background-color: rgb(188, 197, 218);
+    background-color: rgb(255, 255, 255);
     border-bottom-left-radius: 25px;
     border-bottom-right-radius: 25px;
     border-top-left-radius: 25px;
@@ -194,17 +163,10 @@ li {
     font-family: "Comic Sans MS", cursive, sans-serif;
     color: rgb(214, 204, 236);
     margin-left: 8%;
-    font-size: 125%;
+    font-size: 115%;
 }
 
-.fontp:hover {
-    transition-duration: 0.3s;
-    font-family: "Comic Sans MS", cursive, sans-serif;
-    color: rgb(214, 204, 236);
-    margin-left: 8%;
-    font-size: 135%;
-    font-style: italic
-}
+
 
 .box5 {
     width: 90%;
@@ -225,6 +187,7 @@ li {
     font-family: "Comic Sans MS", cursive, sans-serif;
     color: rgb(0, 0, 0);
     font-weight: bold;
+    font-size: 100%;
 }
 
 .ag:hover {
@@ -233,6 +196,7 @@ li {
     transition-duration: 0.3s;
     text-align: center;
     text-decoration: none;
+    font-size: 110%;
 }
 
 .dv {
@@ -251,6 +215,7 @@ li {
     font-family: 'Courier New', Courier, monospace;
     color: rgb(255, 255, 255);
     margin-left: 20px;
+
 }
 
 .fontli {
@@ -270,4 +235,48 @@ li {
     text-decoration: underline;
     transition-duration: 0.3s;
     text-decoration: none;
+}   
+.ag2 {
+    margin-top: 4%;
+    text-decoration: none;
+    transition-duration: 0.3s;
+    font-size: 20px;
+    font-family: "Comic Sans MS", cursive, sans-serif;
+    color: rgb(0, 0, 0);
+    font-weight: bold;
+    font-size: 130%;
+}
+
+.ag2:hover {
+    font-size: 35px;
+    text-decoration: underline;
+    transition-duration: 0.3s;
+    text-align: center;
+    text-decoration: none;
+    font-size: 160%;
+}
+    
+.ag3 {
+    margin-top: 4%;
+    text-decoration: none;
+    transition-duration: 0.3s;
+    font-size: 20px;
+    font-family: "Comic Sans MS", cursive, sans-serif;
+    color: rgb(255, 255, 255);
+    font-weight: bold;
+    font-size: 160%;
+}
+
+.ag3:hover {
+    color: #c1d0d398;
+    font-size: 35px;
+    text-decoration: underline;
+    transition-duration: 0.3s;
+    text-align: center;
+    text-decoration: none;
+    font-size: 180%;
+}
+.img{
+   width: 50px;
+   height: 50px; 
 }
